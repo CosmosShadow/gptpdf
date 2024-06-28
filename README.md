@@ -17,13 +17,15 @@ This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) li
 
 ## Process steps
 
-1. Use the PyMuPDF library to parse the PDF and extract all non-text rectangular areas.
-2. Convert all non-text rectangular areas on the PDF into pictures and number them
-3. Mark each page of the PDF with a red rectangle and number and save it as an image, similar to the following:
+1. Use the PyMuPDF library to parse the PDF and extract all non-text areas.
+
+2. Convert all non-text areas on the PDF into images and number them
+
+3. Mark the non-text areas and numbers on each page of the PDF and save them as images, similar to the following:
 
 ![](docs/demo.jpg)
 
-4. Based on the picture in step 3, use a large visual model (such as GPT-4o) to parse and get the markdown content.
+4. Based on the image in step 3, use a large visual model (such as GPT-4o) to parse and obtain the markdown content.
 
 
 
