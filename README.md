@@ -1,22 +1,37 @@
 # gptpdf
-Using GPT to parse PDF
 
-## Introduction
+<p align="center">
+<a href="README_CN.md"><img src="https://img.shields.io/badge/文档-中文版-blue.svg" alt="CN doc"></a>
+<a href="README.md"><img src="https://img.shields.io/badge/document-English-blue.svg" alt="EN doc"></a>
+</p>
 
-This package uses OpenAI's GPT-4o to parse PDFs to Markdowns.
+Using VLLM (like GPT-4o) to parse PDF into markdown.
 
-It perfectly parse text, image, math equations, charts, and tables.
+Our method can almost perfectly parse typesetting, mathematical formulas, tables, pictures, charts, etc.
 
-It almost cost $0.013 per page.
+Average price per page: $0.013
 
 This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib to interact with OpenAI API.
 
-TODO: add parse work flow
+
+
+## Process steps
+
+1. Use the PyMuPDF library to parse the PDF and extract all non-text rectangular areas (tables, pictures, icons, etc.)
+2. Convert all non-text rectangular areas on the PDF into pictures and number them
+3. Mark each page of the PDF with a red rectangle and number and save it as an image, similar to the following:
+
+![](docs/demo.jpg)
+
+4. Based on the picture in step 3, use a large visual model (such as GPT-4o) to parse and get the markdown content (including pictures, tables, formulas, etc.)
+
 
 
 ## DEMO
 
 See [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you_need/output.md) for PDF [examples/attention_is_all_you_need.pdf](examples/attention_is_all_you_need.pdf).
+
+
 
 ## Installation
 
@@ -24,55 +39,35 @@ See [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you
 pip install gptpdf
 ```
 
+
+
 ## Usage
 
 ```python
 from gptpdf import parse_pdf
-pdf_path = '../examples/attention_is_all_you_need.pdf'
-output_dir = '../examples/attention_is_all_you_need/'
-api_key = os.getenv('OPENAI_API_KEY')
-base_url = os.getenv('OPENAI_API_BASE')
-# Manually provide OPENAI_API_KEY and OPEN_API_BASE
-content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model='gpt-4o')
+api_key = 'Your OpenAI API Key'
+content, image_paths = parse_pdf(pdf_path, api_key=api_key)
 print(content)
-print(image_paths)
-# also output_dir/output.md is generated
 ```
 
-```python
-from gptpdf import parse_pdf
-pdf_path = '../examples/attention_is_all_you_need.pdf'
-output_dir = '../examples/attention_is_all_you_need/'
-# Use OPENAI_API_KEY and OPENAI_API_BASE from environment variables
-content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, model='gpt-4o', verbose=True)
-print(content)
-print(image_paths)
-# also output_dir/output.md is generated
-```
+See more in [test/test.py](test/test.py)
+
+
 
 ## API
 
-```python
-def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False):
-    """
-    parse pdf file to markdown file
-    :param pdf_path: pdf file path
-    :param output_dir: output directory. store all images and markdown file
-    :param api_key: OpenAI API Key (optional). If not provided, Use OPENAI_API_KEY environment variable.
-    :param base_url: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
-    :param model: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
-    :param verbose: verbose mode
-    :return: markdown content with ![](path/to/image.png) and all rect image (image, table, chart, ...) paths.
-    """
+parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False)
 
-    """
-    解析PDF文件到markdown文件
-    :param pdf_path: pdf文件路径
-    :param output_dir: 输出目录。存储所有的图片和markdown文件
-    :param api_key: OpenAI API Key（可选）。如果未提供，则使用OPENAI_API_KEY环境变量。
-    :param base_url: OpenAI Base URL。 （可选）。如果未提供，则使用OPENAI_BASE_URL环境变量。
-    :param model: OpenAI Vison LLM Model，默认为'gpt-4o'。您还可以使用qwen-vl-max
-    :param verbose: 详细模式，默认为False
-    :return: (content, all_rect_images), markdown内容，带有![](path/to/image.png) 和 所有矩形图像（图像、表格、图表等）路径列表。
-    """
-```
+parse pdf file to markdown file, and return markdown content and all image paths.
+
+**pdf_path**: pdf file path
+
+**output_dir**: output directory. store all images and markdown file
+
+**api_key**: OpenAI API Key (optional). If not provided, Use OPENAI_API_KEY environment variable.
+
+**base_url**: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
+
+**model**: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
+
+**verbose**: verbose mode
