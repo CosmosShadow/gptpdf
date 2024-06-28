@@ -17,11 +17,11 @@ This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) li
 
 ## Process steps
 
-1. 使用 PyMuPDF 库，对 PDF 进行解析出所有非文本区域，并做好标记，比如:
+1. Use the PyMuPDF library to parse the PDF to find all non-text areas and mark them, for example:
 
 ![](docs/demo.jpg)
 
-2. 使用视觉大模型（如 GPT-4o）进行解析，得到 markdown 文件。
+2. Use a large visual model (such as GPT-4o) to parse and get a markdown file.
 
 
 

@@ -11,7 +11,7 @@
 
 每页平均价格：0.013 美元
 
-改库使用 [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib 与 OpenAI API 交互。
+我们使用 [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib 与 OpenAI API 交互。
 
 
 
