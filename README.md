@@ -4,7 +4,9 @@ Using GPT to parse PDF
 ## Introduction
 
 This package uses OpenAI's GPT-4o to parse PDFs to Markdowns.
+
 It perfectly parse text, image, math equations, charts, and tables.
+
 It almost cost $0.013 per page.
 
 
