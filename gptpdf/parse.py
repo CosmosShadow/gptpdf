@@ -150,7 +150,7 @@ def _parse_rects(page):
     return _parse_images(page) + _parse_drawings(page)
 
 
-def _parse_pdf_to_images(pdf_path, output_dir):
+def _parse_pdf_to_images(pdf_path, output_dir='./'):
     """
     parse pdf to images and save to output_dir
     :param pdf_path: pdf file path
@@ -163,6 +163,7 @@ def _parse_pdf_to_images(pdf_path, output_dir):
 
     image_infos = []
     for page_index, page in enumerate(pdf_document):
+        print(f'parse page: {page_index}')
         # 保存页面为图片
         page_image = page.get_pixmap(matrix=fitz.Matrix(3, 3))
         
@@ -173,7 +174,7 @@ def _parse_pdf_to_images(pdf_path, output_dir):
         rects = _parse_rects(page)
         # rects = _parse_tables(page)
         for index, rect in enumerate(rects):
-            print(page_index, index, rect)
+            # print(page_index, index, rect)
             fitz_rect = fitz.Rect(rect)
             pix = page.get_pixmap(clip=fitz_rect, matrix=fitz.Matrix(4, 4))
             name = f'{page_index}_{index}.png'
@@ -210,7 +211,7 @@ def _parse_pdf_to_images(pdf_path, output_dir):
     return image_infos
 
 
-def _gpt_parse_images(image_infos, output_dir, api_key=None, base_url=None, model='gpt-4o'):
+def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False):
     """
     parse images to markdown content
     :param image_infos: [(page_image, rect_images)]
@@ -238,23 +239,23 @@ def _gpt_parse_images(image_infos, output_dir, api_key=None, base_url=None, mode
     agent = Agent(role=role, api_key=api_key, base_url=base_url, model=model, disable_python_run=True)
     contents = []
     for index, (page_image, rect_images) in enumerate(image_infos):
-        print(f'Processing page: {index}')
+        print(f'gpt parse page: {index}')
         agent.clear()
         local_prompt = prompt
         if rect_images:
             local_prompt += rect_prompt % ', '.join(rect_images)
-        content = agent.run([local_prompt, {'image': page_image}])
+        content = agent.run([local_prompt, {'image': page_image}], show_stream=verbose)
         contents.append(content)
 
     # 输出结果
-    os.path.join(output_dir, 'output.md')
-    with open('output.md', 'w') as f:
+    output_path = os.path.join(output_dir, 'output.md')
+    with open(output_path, 'w') as f:
         f.write('\n\n'.join(contents))
 
     return '\n\n'.join(contents)
 
 
-def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o'):
+def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False):
     """
     parse pdf file to markdown file
     :param pdf_path: pdf file path
@@ -262,19 +263,31 @@ def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt
     :param api_key: OpenAI API Key (optional). If not provided, Use OPENAI_API_KEY environment variable.
     :param base_url: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
     :param model: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
+    :param verbose: verbose mode
     :return: markdown content with ![](path/to/image.png) and all rect image (image, table, chart, ...) paths.
+    """
+    """
+    解析PDF文件到markdown文件
+    :param pdf_path: pdf文件路径
+    :param output_dir: 输出目录。存储所有的图片和markdown文件
+    :param api_key: OpenAI API Key（可选）。如果未提供，则使用OPENAI_API_KEY环境变量。
+    :param base_url: OpenAI Base URL。 （可选）。如果未提供，则使用OPENAI_BASE_URL环境变量。
+    :param model: OpenAI Vison LLM Model，默认为'gpt-4o'。您还可以使用qwen-vl-max
+    :param verbose: 详细模式，默认为False
+    :return: (content, all_rect_images), markdown内容，带有![](path/to/image.png) 和 所有矩形图像（图像、表格、图表等）路径列表。
     """
     import os
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    image_infos = _parse_pdf_to_images(pdf_path, output_dir)
-    content = _gpt_parse_images(image_infos, api_key, base_url, model)
+    image_infos = _parse_pdf_to_images(pdf_path, output_dir=output_dir)
+    content = _gpt_parse_images(image_infos, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=verbose)
 
     # 删除每页的图片 & 保留所有的矩形图片
     all_rect_images = []
     for page_image, rect_images in image_infos:
-        os.remove(page_image)
+        if os.path.exists(page_image):
+            os.remove(page_image)
         all_rect_images.extend(rect_images)
     
     return content, all_rect_images

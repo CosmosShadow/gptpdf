@@ -1,2 +1,5 @@
 
 test/.env
+gp/*
+*.pyc
+dist/*
