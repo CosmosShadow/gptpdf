@@ -58,18 +58,18 @@ See more in [test/test.py](test/test.py)
 
 ## API
 
-parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False)
+**parse_pdf**(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False)
 
 parse pdf file to markdown file, and return markdown content and all image paths.
 
-**pdf_path**: pdf file path
+- **pdf_path**: pdf file path
 
-**output_dir**: output directory. store all images and markdown file
+- **output_dir**: output directory. store all images and markdown file
 
-**api_key**: OpenAI API Key (optional). If not provided, Use OPENAI_API_KEY environment variable.
+- **api_key**: OpenAI API Key (optional). If not provided, Use OPENAI_API_KEY environment variable.
 
-**base_url**: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
+- **base_url**: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
 
-**model**: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
+- **model**: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
 
-**verbose**: verbose mode
+- **verbose**: verbose mode

@@ -60,6 +60,8 @@ print(content)
 
 **parse_pdf**(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False)
 
+将 pdf 文件解析为 markdown 文件，并返回 markdown 内容和所有图片路径列表。
+
 - **pdf_path**：pdf 文件路径
 
 - **output_dir**：输出目录。存储所有图片和 markdown 文件
