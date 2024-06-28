@@ -9,6 +9,8 @@ It perfectly parse text, image, math equations, charts, and tables.
 
 It almost cost $0.013 per page.
 
+TODO: add parse work flow
+
 
 ## DEMO
 
