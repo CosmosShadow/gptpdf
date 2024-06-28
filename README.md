@@ -9,6 +9,8 @@ It perfectly parse text, image, math equations, charts, and tables.
 
 It almost cost $0.013 per page.
 
+This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib to interact with OpenAI API.
+
 TODO: add parse work flow
 
 
