@@ -7,7 +7,7 @@
 
 Using VLLM (like GPT-4o) to parse PDF into markdown.
 
-Our method can almost perfectly parse typesetting, mathematical formulas, tables, pictures, charts, etc.
+Our approach is very simple (only 293 lines of code), but can almost perfectly parse typography, math formulas, tables, pictures, charts, etc.
 
 Average price per page: $0.013
 
@@ -17,15 +17,11 @@ This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) li
 
 ## Process steps
 
-1. Use the PyMuPDF library to parse the PDF and extract all non-text areas.
-
-2. Convert all non-text areas on the PDF into images and number them
-
-3. Mark the non-text areas and numbers on each page of the PDF and save them as images, similar to the following:
+1. 使用 PyMuPDF 库，对 PDF 进行解析出所有非文本区域，并做好标记，比如:
 
 ![](docs/demo.jpg)
 
-4. Based on the image in step 3, use a large visual model (such as GPT-4o) to parse and obtain the markdown content.
+2. 使用视觉大模型（如 GPT-4o）进行解析，得到 markdown 文件。
 
 
 
