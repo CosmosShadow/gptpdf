@@ -69,3 +69,5 @@ print(content)
 - **model**：OpenAI Vison LLM 模型，默认为“gpt-4o”。您也可以使用 qwen-vl-max
 
 - **verbose**：详细模式
+
+- **gpt_worker**: gpt解析工作线程数，默认为1. 如果您的机器性能较好，可以适当调高，以提高解析速度。

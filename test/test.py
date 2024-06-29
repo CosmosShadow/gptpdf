@@ -11,7 +11,7 @@ def test_use_api_key():
     api_key = os.getenv('OPENAI_API_KEY')
     base_url = os.getenv('OPENAI_API_BASE')
     # Manually provide OPENAI_API_KEY and OPEN_API_BASE
-    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model='gpt-4o')
+    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model='gpt-4o', gpt_worker=6)
     print(content)
     print(image_paths)
     # also output_dir/output.md is generated

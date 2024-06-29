@@ -9,7 +9,7 @@ Using VLLM (like GPT-4o) to parse PDF into markdown.
 
 Our approach is very simple (only 293 lines of code), but can almost perfectly parse typography, math formulas, tables, pictures, charts, etc.
 
-Average price per page: $0.013
+Average cost per page: $0.013
 
 This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib to interact with OpenAI API.
 
@@ -69,3 +69,5 @@ parse pdf file to markdown file, and return markdown content and all image paths
 - **model**: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
 
 - **verbose**: verbose mode
+
+- **gpt_worker**: gpt parse worker number. default is 1. If your machine performance is good, you can increase it appropriately to improve parsing speed.

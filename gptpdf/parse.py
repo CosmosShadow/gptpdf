@@ -1,6 +1,7 @@
 import fitz  # PyMuPDF
 import shapely.geometry as sg
 from shapely.validation import explain_validity
+import concurrent.futures
 
 
 def _is_near(rect1, rect2, distance=20):
@@ -211,7 +212,7 @@ def _parse_pdf_to_images(pdf_path, output_dir='./'):
     return image_infos
 
 
-def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False):
+def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False, gpt_worker=1):
     """
     parse images to markdown content
     :param image_infos: [(page_image, rect_images)]
@@ -236,16 +237,23 @@ def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None,
 """
 
     role = '你是一个PDF文档解析器，使用markdown和latex语法输出图片的内容。'
-    agent = Agent(role=role, api_key=api_key, base_url=base_url, model=model, disable_python_run=True)
-    contents = []
-    for index, (page_image, rect_images) in enumerate(image_infos):
+
+    def _process_page(index, image_info):
         print(f'gpt parse page: {index}')
-        agent.clear()
+        agent = Agent(role=role, api_key=api_key, base_url=base_url, model=model, disable_python_run=True)
+        page_image, rect_images = image_info
         local_prompt = prompt
         if rect_images:
             local_prompt += rect_prompt % ', '.join(rect_images)
         content = agent.run([local_prompt, {'image': page_image}], show_stream=verbose)
-        contents.append(content)
+        return index, content
+    
+    contents = [None] * len(image_infos)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=gpt_worker) as executor:
+        futures = [executor.submit(_process_page, index, image_info) for index, image_info in enumerate(image_infos)]
+        for future in concurrent.futures.as_completed(futures):
+            index, content = future.result()
+            contents[index] = content
 
     # 输出结果
     output_path = os.path.join(output_dir, 'output.md')
@@ -255,7 +263,7 @@ def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None,
     return '\n\n'.join(contents)
 
 
-def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False):
+def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False, gpt_worker=1):
     """
     parse pdf file to markdown file
     :param pdf_path: pdf file path
@@ -264,6 +272,7 @@ def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt
     :param base_url: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
     :param model: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
     :param verbose: verbose mode
+    :param gpt_worker: gpt parse worker number
     :return: markdown content with ![](path/to/image.png) and all rect image (image, table, chart, ...) paths.
     """
     """
@@ -274,6 +283,7 @@ def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt
     :param base_url: OpenAI Base URL。 （可选）。如果未提供，则使用OPENAI_BASE_URL环境变量。
     :param model: OpenAI Vison LLM Model，默认为'gpt-4o'。您还可以使用qwen-vl-max
     :param verbose: 详细模式，默认为False
+    :param gpt_worker: gpt解析工作线程数，默认为1
     :return: (content, all_rect_images), markdown内容，带有![](path/to/image.png) 和 所有矩形图像（图像、表格、图表等）路径列表。
     """
     import os
@@ -281,7 +291,7 @@ def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt
         os.makedirs(output_dir)
 
     image_infos = _parse_pdf_to_images(pdf_path, output_dir=output_dir)
-    content = _gpt_parse_images(image_infos, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=verbose)
+    content = _gpt_parse_images(image_infos, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=verbose, gpt_worker=gpt_worker)
 
     # 删除每页的图片 & 保留所有的矩形图片
     all_rect_images = []

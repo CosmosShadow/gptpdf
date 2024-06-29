@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gptpdf"
-version = "0.0.1"
+version = "0.0.2"
 description = "Using GPT to parse PDF"
 authors = ["Chen Li <lichenarthurdata@gmail.com>"]
 license = "Apache 2.0"
