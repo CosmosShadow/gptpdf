@@ -71,3 +71,13 @@ print(content)
 - **verbose**：详细模式
 
 - **gpt_worker**: gpt解析工作线程数，默认为1. 如果您的机器性能较好，可以适当调高，以提高解析速度。
+
+
+
+## 加入我们👏🏻
+
+使用微信扫描下方二维码，加入微信群聊，或参与贡献。
+
+<p align="center">
+<img src="./docs/wechat.jpg" alt="wechat" width=400/>
+</p>
