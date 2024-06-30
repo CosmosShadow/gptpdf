@@ -48,7 +48,8 @@ def _merge_rects(rect_list, distance=20, horizontal_distance=None):
         while rect_list:
             rect = rect_list.pop(0)
             for other_rect in rect_list:
-                if _is_near(rect, other_rect, distance) or (horizontal_distance and _is_horizontal_near(rect, other_rect, horizontal_distance)):
+                if _is_near(rect, other_rect, distance) or (
+                        horizontal_distance and _is_horizontal_near(rect, other_rect, horizontal_distance)):
                     rect = _union_rects(rect, other_rect)
                     rect_list.remove(other_rect)
                     merged = True
@@ -116,12 +117,14 @@ def _parse_drawings(page):
     merged_rects = _merge_rects(merged_rects, distance=10)
 
     # 过滤掉高度 或者 宽度 不足 10 的矩形
-    merged_rects = [rect for rect in merged_rects if rect.bounds[2] - rect.bounds[0] > 10 and rect.bounds[3] - rect.bounds[1] > 10]
+    merged_rects = [rect for rect in merged_rects if
+                    rect.bounds[2] - rect.bounds[0] > 10 and rect.bounds[3] - rect.bounds[1] > 10]
 
     # 将Polygon对象抽取bounds属性
     merged_rects = [rect.bounds for rect in merged_rects]
 
     return merged_rects
+
 
 def _parse_images(page):
     """
@@ -129,6 +132,7 @@ def _parse_images(page):
     """
     images = page.get_image_info()
     return [image['bbox'] for image in images]
+
 
 def _parse_tables(page):
     """
@@ -167,7 +171,7 @@ def _parse_pdf_to_images(pdf_path, output_dir='./'):
         print(f'parse page: {page_index}')
         # 保存页面为图片
         page_image = page.get_pixmap(matrix=fitz.Matrix(3, 3))
-        
+
         rect_images = []
         # 解析页面中的矩形
         # if page_index != 5:
@@ -192,10 +196,10 @@ def _parse_pdf_to_images(pdf_path, output_dir='./'):
             text_x = fitz_rect.x0 + 2  # 偏移量为2个单位
             text_y = fitz_rect.y0 + 10  # 偏移量为10个单位
             text_rect = fitz.Rect(text_x, text_y - 9, text_x + 80, text_y + 2)  # 创建一个白色背景的矩形
-            
+
             # 绘制白色背景矩形
             page.draw_rect(text_rect, color=(1, 1, 1), fill=(1, 1, 1))
-            
+
             # 插入带有白色背景的文字
             page.insert_text((text_x, text_y), name, fontsize=10, color=(1, 0, 0))
 
@@ -212,7 +216,8 @@ def _parse_pdf_to_images(pdf_path, output_dir='./'):
     return image_infos
 
 
-def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False, gpt_worker=1):
+def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False,
+                      gpt_worker=1):
     """
     parse images to markdown content
     :param image_infos: [(page_image, rect_images)]
@@ -224,13 +229,16 @@ def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None,
     """
     import os
     from GeneralAgent import Agent
-
+    # TODO： 提示词优化，适配更多模型。
     prompt = """
-使用markdown语法，输出图片的全部内容。
-内容不要包含在```markdown ```中、段落公式使用 $$ $$ 的形式、行内公式使用 $ $ 的形式、忽略掉长直线、忽略掉页码。
-不要解释，直接输出内容。
-"""
+使用markdown语法，将要图片中识别到的文字转换为markdown格式是输出。你必须做到：
+1. 输出和使用识别到的图片的相同的语言，例如，识别到英语的字段，输出的内容必须是英语。
+2. 不要解释和输出无关的文字，直接输出图片中的内容。例如，严禁输出 “以下是我根据图片内容生成的markdown文本：”这样的例子，而是应该直接输出markdown。
+3. 内容不要包含在```markdown ```中、段落公式使用 $$ $$ 的形式、行内公式使用 $ $ 的形式、忽略掉长直线、忽略掉页码。
 
+再次强调，不要解释和输出无关的文字，直接输出图片中的内容。
+"""
+    # TODO： 提示词优化，适配更多模型。
     rect_prompt = """
 图片中用红色框和名称(%s)标注出了一些区域。
 如果区域是表格或者图片，使用 ![]() 的形式插入到输出内容中，否则直接输出文字内容。
@@ -247,7 +255,7 @@ def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None,
             local_prompt += rect_prompt % ', '.join(rect_images)
         content = agent.run([local_prompt, {'image': page_image}], show_stream=verbose)
         return index, content
-    
+
     contents = [None] * len(image_infos)
     with concurrent.futures.ThreadPoolExecutor(max_workers=gpt_worker) as executor:
         futures = [executor.submit(_process_page, index, image_info) for index, image_info in enumerate(image_infos)]
@@ -291,7 +299,8 @@ def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt
         os.makedirs(output_dir)
 
     image_infos = _parse_pdf_to_images(pdf_path, output_dir=output_dir)
-    content = _gpt_parse_images(image_infos, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=verbose, gpt_worker=gpt_worker)
+    content = _gpt_parse_images(image_infos, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model,
+                                verbose=verbose, gpt_worker=gpt_worker)
 
     # 删除每页的图片 & 保留所有的矩形图片
     all_rect_images = []
@@ -299,5 +308,5 @@ def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt
         if os.path.exists(page_image):
             os.remove(page_image)
         all_rect_images.extend(rect_images)
-    
+
     return content, all_rect_images
