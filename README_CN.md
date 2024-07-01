@@ -66,7 +66,7 @@ print(content)
 
 - **base_url**：OpenAI 基本 URL。（可选）。如果未提供，则使用 OPENAI_BASE_URL 环境变量。
 
-- **model**：OpenAI Vison LLM 模型，默认为“gpt-4o”。您也可以使用 qwen-vl-max
+- **model**：OpenAI API格式的多模态大模型，默认为 “gpt-4o”。如果您需要使用其他模型，例如 [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start), [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v), 可以修通过设置 `OPENAI_API_BASE` 或指定 `base_url` 来使用。
 
 - **verbose**：详细模式
 
