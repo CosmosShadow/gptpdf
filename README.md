@@ -66,7 +66,7 @@ parse pdf file to markdown file, and return markdown content and all image paths
 
 - **base_url**: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
 
-- **model**: OpenAI Vision Large Model, default is 'gpt-4o'. You also can use [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start), [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v) by change the `OPENAI_API_BASE` or specify `base_url`.
+- **model**: OpenAI Vision Large Model, default is 'gpt-4o'. You also can use [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start), [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v) by change the `OPENAI_BASE_URL` or specify `base_url`.
 
 - **verbose**: verbose mode
 
