@@ -265,7 +265,7 @@ def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None,
 
     # 输出结果
     output_path = os.path.join(output_dir, 'output.md')
-    with open(output_path, 'w') as f:
+    with open(output_path, 'w',encoding='utf-8') as f:
         f.write('\n\n'.join(contents))
 
     return '\n\n'.join(contents)
