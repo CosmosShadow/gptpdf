@@ -13,6 +13,8 @@
 
 我们使用 [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib 与 OpenAI API 交互。
 
+[pdfgpt-ui] 是一个基于 gptpdf 的可视化工具。
+
 
 
 ## 处理流程
