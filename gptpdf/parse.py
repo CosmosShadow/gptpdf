@@ -219,13 +219,16 @@ def _parse_pdf_to_images(pdf_path, output_dir='./'):
 def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False,
                       gpt_worker=1):
     """
-    parse images to markdown content
-    :param image_infos: [(page_image, rect_images)]
-    :param output_dir: output directory
-    :param api_key: OpenAI API Key
-    :param base_url: OpenAI Base URL
-    :param model: OpenAI Vison LLM Model
-    :return: markdown content
+    Parse images to markdown content.
+    
+    :param image_infos: List of tuples containing page images and rect images [(page_image, rect_images)].
+    :param output_dir: Directory where the output will be saved.
+    :param api_key: OpenAI API Key used for authentication.
+    :param base_url: Base URL for the OpenAI API.
+    :param model: OpenAI Vision LLM Model to be used.
+    :param verbose: Boolean flag to indicate if verbose logging is enabled.
+    :param gpt_worker: Number of GPT worker threads to use.
+    :return: Parsed markdown content as a string.
     """
     import os
     from GeneralAgent import Agent
@@ -273,26 +276,28 @@ def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None,
 
 def parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False, gpt_worker=1):
     """
-    parse pdf file to markdown file
-    :param pdf_path: pdf file path
-    :param output_dir: output directory. store all images and markdown file
-    :param api_key: OpenAI API Key (optional). If not provided, Use OPENAI_API_KEY environment variable.
-    :param base_url: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
-    :param model: OpenAI Vison LLM Model, default is 'gpt-4o'. You also can use qwen-vl-max
-    :param verbose: verbose mode
-    :param gpt_worker: gpt parse worker number
-    :return: markdown content with ![](path/to/image.png) and all rect image (image, table, chart, ...) paths.
+    Parse a PDF file to a markdown file.
+    
+    :param pdf_path: Path to the PDF file.
+    :param output_dir: Directory to store all images and the markdown file.
+    :param api_key: OpenAI API Key (optional). If not provided, the OPENAI_API_KEY environment variable will be used.
+    :param base_url: OpenAI Base URL (optional). If not provided, the OPENAI_BASE_URL environment variable will be used.
+    :param model: OpenAI Vision LLM Model, default is 'gpt-4o'. You can also use 'qwen-vl-max'.
+    :param verbose: Boolean flag to enable verbose mode.
+    :param gpt_worker: Number of GPT parse worker threads to use.
+    :return: Markdown content with image links (![](path/to/image.png)) and paths to all rect images (e.g., images, tables, charts).
     """
     """
     解析PDF文件到markdown文件
+    
     :param pdf_path: pdf文件路径
     :param output_dir: 输出目录。存储所有的图片和markdown文件
     :param api_key: OpenAI API Key（可选）。如果未提供，则使用OPENAI_API_KEY环境变量。
-    :param base_url: OpenAI Base URL。 （可选）。如果未提供，则使用OPENAI_BASE_URL环境变量。
-    :param model: OpenAI Vison LLM Model，默认为'gpt-4o'。您还可以使用qwen-vl-max
-    :param verbose: 详细模式，默认为False
-    :param gpt_worker: gpt解析工作线程数，默认为1
-    :return: (content, all_rect_images), markdown内容，带有![](path/to/image.png) 和 所有矩形图像（图像、表格、图表等）路径列表。
+    :param base_url: OpenAI Base URL（可选）。如果未提供，则使用OPENAI_BASE_URL环境变量。
+    :param model: OpenAI Vision LLM Model，默认为'gpt-4o'。您还可以使用'qwen-vl-max'。
+    :param verbose: 详细模式，默认为False。
+    :param gpt_worker: gpt解析工作线程数，默认为1。
+    :return: (content, all_rect_images)，markdown内容，带有![](path/to/image.png)和所有矩形图像（图像、表格、图表等）路径列表。
     """
     import os
     if not os.path.exists(output_dir):
