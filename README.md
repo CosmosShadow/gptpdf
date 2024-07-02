@@ -13,7 +13,7 @@ Average cost per page: $0.013
 
 This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib to interact with OpenAI API.
 
-[pdfgpt-ui] is a visual tool based on gptpdf.
+[pdfgpt-ui](https://github.com/daodao97/gptpdf-ui) is a visual tool based on gptpdf.
 
 
 
