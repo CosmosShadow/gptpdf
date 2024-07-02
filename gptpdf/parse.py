@@ -231,7 +231,7 @@ def _gpt_parse_images(image_infos, output_dir='./', api_key=None, base_url=None,
     from GeneralAgent import Agent
     # TODO： 提示词优化，适配更多模型。
     prompt = """
-使用markdown语法，将要图片中识别到的文字转换为markdown格式是输出。你必须做到：
+使用markdown语法，将图片中识别到的文字转换为markdown格式输出。你必须做到：
 1. 输出和使用识别到的图片的相同的语言，例如，识别到英语的字段，输出的内容必须是英语。
 2. 不要解释和输出无关的文字，直接输出图片中的内容。例如，严禁输出 “以下是我根据图片内容生成的markdown文本：”这样的例子，而是应该直接输出markdown。
 3. 内容不要包含在```markdown ```中、段落公式使用 $$ $$ 的形式、行内公式使用 $ $ 的形式、忽略掉长直线、忽略掉页码。
