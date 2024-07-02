@@ -66,7 +66,12 @@ print(content)
 
 - **base_url**：OpenAI 基本 URL。（可选）。如果未提供，则使用 OPENAI_BASE_URL 环境变量。
 
-- **model**：OpenAI API格式的多模态大模型，默认为 “gpt-4o”。如果您需要使用其他模型，例如 [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start), [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v), 可以通过修改环境变量 `OPENAI_BASE_URL` 或 指定API参数 `base_url` 来使用。
+- **model**：OpenAI API格式的多模态大模型，默认为 “gpt-4o”。
+    如果您需要使用其他模型，例如 [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start) (尚未测试)
+
+    [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v), 可以通过修改环境变量 `OPENAI_BASE_URL` 或 指定API参数 `base_url` 来使用。 (已经测试)
+
+    您也可以通过将 `base_url` 指定为 `https://xxxx.openai.azure.com/` 来使用 Azure OpenAI，api_key 是 Azure API 密钥，模型类似于 'azure_xxxx'，其中 xxxx 是部署的模型名称（不是 openai 模型名称）(已经测试)
 
 - **verbose**：详细模式
 

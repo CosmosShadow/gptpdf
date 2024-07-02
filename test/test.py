@@ -27,7 +27,23 @@ def test_use_env():
     print(image_paths)
     # also output_dir/output.md is generated
 
+def test_azure():
+    from gptpdf import parse_pdf
+    api_key = '8ef0b4df45e444079cd5a4xxxxx' # Azure API Key
+    base_url = 'https://xxx.openai.azure.com/' # Azure API Base URL
+    model = 'azure_xxxx' # azure_ with deploy ID name (not open ai model name), e.g. azure_cpgpt4
+
+    pdf_path = '../examples/attention_is_all_you_need.pdf'
+    output_dir = '../examples/attention_is_all_you_need/'
+    # Use OPENAI_API_KEY and OPENAI_API_BASE from environment variables
+    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=True)
+    print(content)
+    print(image_paths)
+    
+
+
 
 if __name__ == '__main__':
-    test_use_api_key()
+    # test_use_api_key()
     # test_use_env()
+    test_azure()
