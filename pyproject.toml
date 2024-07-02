@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gptpdf"
-version = "0.0.5"
+version = "0.0.6"
 description = "Using GPT to parse PDF"
 authors = ["Chen Li <lichenarthurdata@gmail.com>"]
 license = "Apache 2.0"
@@ -11,7 +11,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-GeneralAgent = "^0.3.12"
+GeneralAgent = "^0.3.13"
 shapely = "^2.0.1"
 pymupdf = "^1.24.7"
 python-dotenv = "^1.0.0"
