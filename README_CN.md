@@ -25,8 +25,7 @@
 
 ## 样例
 
-有关
-PDF，请参阅 [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you_need/output.md) [examples/attention_is_all_you_need.pdf](examples/attention_is_all_you_need.pdf)。
+有关 PDF，请参阅 [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you_need/output.md) [examples/attention_is_all_you_need.pdf](examples/attention_is_all_you_need.pdf)。
 
 ## 安装
 
@@ -50,8 +49,19 @@ print(content)
 
 ### parse_pdf
 
-**函数
-**：`parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False, gpt_worker=1)`
+**函数**：
+```
+def parse_pdf(
+        pdf_path: str,
+        output_dir: str = './',
+        prompt: Optional[Dict] = None,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        model: str = 'gpt-4o',
+        verbose: bool = False,
+        gpt_worker: int = 1
+) -> Tuple[str, List[str]]:
+```
 
 将 PDF 文件解析为 Markdown 文件，并返回 Markdown 内容和所有图片路径列表。
 

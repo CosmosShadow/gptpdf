@@ -57,7 +57,19 @@ See more in [test/test.py](test/test.py)
 
 ### parse_pdf
 
-**Function**: `parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False, gpt_worker=1)`
+**Function**: 
+```
+def parse_pdf(
+        pdf_path: str,
+        output_dir: str = './',
+        prompt: Optional[Dict] = None,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        model: str = 'gpt-4o',
+        verbose: bool = False,
+        gpt_worker: int = 1
+) -> Tuple[str, List[str]]:
+```
 
 Parses a PDF file into a Markdown file and returns the Markdown content along with all image paths.
 

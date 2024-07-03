@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -168,7 +168,7 @@ def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[st
 
 def _gpt_parse_images(
         image_infos: List[Tuple[str, List[str]]],
-        prompt: Optional[str],
+        prompt: Optional[Dict] = None,
         output_dir: str = './',
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
@@ -224,7 +224,7 @@ def _gpt_parse_images(
 def parse_pdf(
         pdf_path: str,
         output_dir: str = './',
-        prompt: Optional[str] = None,
+        prompt: Optional[Dict] = None,
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
         model: str = 'gpt-4o',
