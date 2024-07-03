@@ -53,26 +53,67 @@ print(content)
 See more in [test/test.py](test/test.py)
 
 
-
 ## API
 
-**parse_pdf**(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False)
+### parse_pdf
 
-parse pdf file to markdown file, and return markdown content and all image paths.
+**Function**: `parse_pdf(pdf_path, output_dir='./', api_key=None, base_url=None, model='gpt-4o', verbose=False, gpt_worker=1)`
 
-- **pdf_path**: pdf file path
+Parses a PDF file into a Markdown file and returns the Markdown content along with all image paths.
 
-- **output_dir**: output directory. store all images and markdown file
+**Parameters**:
 
-- **api_key**: OpenAI API Key (optional). If not provided, Use OPENAI_API_KEY environment variable.
+- **pdf_path**: *str*  
+  Path to the PDF file
 
-- **base_url**: OpenAI Base URL. (optional). If not provided, Use OPENAI_BASE_URL environment variable.
+- **output_dir**: *str*, default: './'  
+  Output directory to store all images and the Markdown file
 
-- **model**: OpenAI Vision Large Model, default is 'gpt-4o'. 
-        You also can use [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start) (not tested yet)
-        [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v) by change the `OPENAI_BASE_URL` or specify `base_url`. 
-        Also you can use Azure OpenAI by specify `base_url` to `https://xxxx.openai.azure.com/`, api_key is Azure API Key, model is like 'azure_xxxx' where xxxx is the deployed model name (not openai model name)
+- **api_key**: *Optional[str]*, optional  
+  OpenAI API key. If not provided, the `OPENAI_API_KEY` environment variable will be used.
 
-- **verbose**: verbose mode
+- **base_url**: *Optional[str]*, optional  
+  OpenAI base URL. If not provided, the `OPENAI_BASE_URL` environment variable will be used. This can be modified to call other large model services with OpenAI API interfaces, such as `GLM-4V`.
 
-- **gpt_worker**: gpt parse worker number. default is 1. If your machine performance is good, you can increase it appropriately to improve parsing speed.
+- **model**: *str*, default: 'gpt-4o'  
+  OpenAI API formatted multimodal large model. If you need to use other models, such as:
+  - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start) (untested)
+  - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v) (tested)
+  - Azure OpenAI, by setting the `base_url` to `https://xxxx.openai.azure.com/` to use Azure OpenAI, where `api_key` is the Azure API key, and the model is similar to `azure_xxxx`, where `xxxx` is the deployed model name (tested).
+
+- **verbose**: *bool*, default: False  
+  Verbose mode. When enabled, the content parsed by the large model will be displayed in the command line.
+
+- **gpt_worker**: *int*, default: 1  
+  Number of GPT parsing worker threads. If your machine has better performance, you can increase this value to speed up the parsing.
+
+- **prompt**: *dict*, optional  
+  If the model you are using does not match the default prompt provided in this repository and cannot achieve the best results, we support adding custom prompts. The prompts in the repository are divided into three parts:
+  - `prompt`: Mainly used to guide the model on how to process and convert text content in images.
+  - `rect_prompt`: Used to handle cases where specific areas (such as tables or images) are marked in the image.
+  - `role_prompt`: Defines the role of the model to ensure the model understands it is performing a PDF document parsing task.
+
+  You can pass custom prompts in the form of a dictionary to replace any of the prompts. Here is an example:
+
+  ```python
+  prompt = {
+      "prompt": "Custom prompt text",
+      "rect_prompt": "Custom rect prompt",
+      "role_prompt": "Custom role prompt"
+  }
+
+  content, image_paths = parse_pdf(
+      pdf_path=pdf_path,
+      output_dir='./output',
+      model="gpt-4o",
+      prompt=prompt,
+      verbose=False,
+  )
+  
+## Join Us 👏🏻
+
+Scan the QR code below with WeChat to join our group chat or contribute.
+
+<p align="center">
+<img src="./docs/wechat.jpg" alt="wechat" width=400/>
+</p>
