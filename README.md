@@ -29,8 +29,10 @@ This package use [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) li
 
 ## DEMO
 
-See [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you_need/output.md) for PDF [examples/attention_is_all_you_need.pdf](examples/attention_is_all_you_need.pdf).
+1. [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you_need/output.md) for PDF [examples/attention_is_all_you_need.pdf](examples/attention_is_all_you_need.pdf).
 
+
+2. [examples/rh/output.md](examples/rh/output.md) for PDF [examples/rh.pdf](examples/rh.pdf).
 
 
 ## Installation
@@ -121,6 +123,12 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
       prompt=prompt,
       verbose=False,
   )
+
+## Version
+
+- 0.0.9: Optimize pdf parsing process, better parsing effect
+- 0.0.2 - 0.0.8: Add gpt_worker parameter；Add GLM-4V, Azure OpenAI support; Fix some bugs
+- 0.0.1: First version
   
 ## Join Us 👏🏻
 
