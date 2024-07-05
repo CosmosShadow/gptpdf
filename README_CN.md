@@ -98,9 +98,9 @@ def parse_pdf(
 
   ```python
   prompt = {
-      "prompt": "自定义提示词语",
-      "rect_prompt": "自定义提示词",
-      "role_prompt": "自定义提示词"
+      "prompt": """自定义提示词语""",
+      "rect_prompt": """自定义提示词""",
+      "role_prompt": """自定义提示词"""
   }
   
   content, image_paths = parse_pdf(
