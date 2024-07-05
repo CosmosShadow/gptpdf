@@ -111,9 +111,9 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
 
   ```python
   prompt = {
-      "prompt": "Custom prompt text",
-      "rect_prompt": "Custom rect prompt",
-      "role_prompt": "Custom role prompt"
+      "prompt": """Custom prompt text""",
+      "rect_prompt": """Custom rect prompt""",
+      "role_prompt": """Custom role prompt"""
   }
 
   content, image_paths = parse_pdf(

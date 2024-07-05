@@ -188,21 +188,24 @@ def _gpt_parse_images(
     """
     from GeneralAgent import Agent
 
-    if prompt is None:
-        prompt = DEFAULT_PROMPT
-        logging.info("prompt is not provided, using default prompt.")
+    if isinstance(prompt, dict) and 'main_prompt' in prompt:
+        prompt =f"""{prompt['main_prompt']}"""
+        logging.info("prompt is provided, using user prompt.")
+    else:
+        prompt=DEFAULT_PROMPT
+        logging.info("prompt is not provided, using default prompt")
     if isinstance(prompt, dict) and 'rect_prompt' in prompt:
-        rect_prompt = prompt['rect_prompt']
+        rect_prompt =f"""{prompt['rect_prompt']}"""
         logging.info("rect_prompt is provided, using user prompt.")
     else:
         rect_prompt = DEFAULT_RECT_PROMPT
-        logging.info("rect_prompt is not provided, using default prompt.")
+        logging.info("rect_prompt is not provided, using default rect prompt.")
     if isinstance(prompt, dict) and 'role_prompt' in prompt:
-        role_prompt = prompt['role_prompt']
+        role_prompt =f"""{prompt['role_prompt']}"""
         logging.info("role_prompt is provided, using user prompt.")
     else:
         role_prompt = DEFAULT_ROLE_PROMPT
-        logging.info("role_prompt is not provided, using default prompt.")
+        logging.info("role_prompt is not provided, using default role prompt.")
 
     def _process_page(index: int, image_info: Tuple[str, List[str]]) -> Tuple[int, str]:
         logging.info(f'gpt parse page: {index}')
