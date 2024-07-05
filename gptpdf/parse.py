@@ -11,23 +11,16 @@ import concurrent.futures
 
 # This Default Prompt Using Chinese and could be changed to other languages.
 
-DEFAULT_PROMPT = """
-使用markdown语法，将图片中识别到的文字转换为markdown格式输出。你必须做到：
+DEFAULT_PROMPT = """使用markdown语法，将图片中识别到的文字转换为markdown格式输出。你必须做到：
 1. 输出和使用识别到的图片的相同的语言，例如，识别到英语的字段，输出的内容必须是英语。
-2. 不要解释和输出无关的文字，直接输出图片中的内容。例如，严禁输出 “以下是我根据图片内容生成的markdown文本：”这样的例子，而是应该直接输出markdown内容
-3. 内容不要包含在```markdown ```中
-4. 段落公式使用 $$ $$ 的形式、行内公式使用 $ $ 的形式。
-5. 忽略掉图片中的直线、页码、左右上下和正文无关的文字。
-
+2. 不要解释和输出无关的文字，直接输出图片中的内容。例如，严禁输出 “以下是我根据图片内容生成的markdown文本：”这样的例子，而是应该直接输出markdown。
+3. 内容不要包含在```markdown ```中、段落公式使用 $$ $$ 的形式、行内公式使用 $ $ 的形式、忽略掉长直线、忽略掉页码。
 再次强调，不要解释和输出无关的文字，直接输出图片中的内容。
 """
-
-DEFAULT_RECT_PROMPT = """
-图片中用红色框和名称(%s)标注出了一些区域(已经抠出)，使用 ![]() 的形式插入到输出内容中。例如，![](path/to/image.png)。
+DEFAULT_RECT_PROMPT = """图片中用红色框和名称(%s)标注出了一些区域。
+如果区域是表格或者图片，使用 ![]() 的形式插入到输出内容中，否则直接输出文字内容。
 """
-
-DEFAULT_ROLE_PROMPT = """
-你是一个PDF文档解析器，使用markdown和latex语法输出图片的内容。
+DEFAULT_ROLE_PROMPT = """你是一个PDF文档解析器，使用markdown和latex语法输出图片的内容。
 """
 
 
@@ -160,9 +153,9 @@ def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[st
             # # 在页面上绘制红色矩形
             big_fitz_rect = fitz.Rect(fitz_rect.x0 - 1, fitz_rect.y0 - 1, fitz_rect.x1 + 1, fitz_rect.y1 + 1)
             # 空心矩形
-            # page.draw_rect(big_fitz_rect, color=(1, 0, 0), width=1)
+            page.draw_rect(big_fitz_rect, color=(1, 0, 0), width=1)
             # 画矩形区域(实心)
-            page.draw_rect(big_fitz_rect, color=(1, 0, 0), fill=(1, 0, 0))
+            # page.draw_rect(big_fitz_rect, color=(1, 0, 0), fill=(1, 0, 0))
             # 在矩形内的左上角写上矩形的索引name，添加一些偏移量
             text_x = fitz_rect.x0 + 2
             text_y = fitz_rect.y0 + 10
