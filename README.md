@@ -126,7 +126,7 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
 
 ## Version
 
-- 0.0.9: Optimize pdf parsing process, better parsing effect
+- 0.0.9~0.0.10: Optimize pdf parsing process, better parsing effect
 - 0.0.2 - 0.0.8: Add gpt_worker parameter；Add GLM-4V, Azure OpenAI support; Fix some bugs
 - 0.0.1: First version
   
