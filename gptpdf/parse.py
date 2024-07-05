@@ -188,8 +188,8 @@ def _gpt_parse_images(
     """
     from GeneralAgent import Agent
 
-    if isinstance(prompt, dict) and 'main_prompt' in prompt:
-        prompt =f"""{prompt['main_prompt']}"""
+    if isinstance(prompt, dict) and 'prompt' in prompt:
+        prompt =f"""{prompt['prompt']}"""
         logging.info("prompt is provided, using user prompt.")
     else:
         prompt=DEFAULT_PROMPT
