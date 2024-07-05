@@ -4,4 +4,4 @@ gp/*
 dist/*
 .idea
 venv
-.vscode/*
+.vscode/
