@@ -7,6 +7,9 @@ dotenv.load_dotenv()
 pdf_path = '../examples/attention_is_all_you_need.pdf'
 output_dir = '../examples/attention_is_all_you_need/'   
 
+pdf_path = '../examples/rh.pdf'
+output_dir = '../examples/rh/'
+
 # 清空output_dir
 import shutil
 shutil.rmtree(output_dir, ignore_errors=True)
@@ -24,12 +27,12 @@ def test_use_api_key():
 
 def test_use_env():
     from gptpdf import parse_pdf
-    
     # Use OPENAI_API_KEY and OPENAI_API_BASE from environment variables
     content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, model='gpt-4o', verbose=True)
     print(content)
     print(image_paths)
     # also output_dir/output.md is generated
+
 
 def test_azure():
     from gptpdf import parse_pdf
