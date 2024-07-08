@@ -17,8 +17,7 @@ DEFAULT_PROMPT = """使用markdown语法，将图片中识别到的文字转换�
 3. 内容不要包含在```markdown ```中、段落公式使用 $$ $$ 的形式、行内公式使用 $ $ 的形式、忽略掉长直线、忽略掉页码。
 再次强调，不要解释和输出无关的文字，直接输出图片中的内容。
 """
-DEFAULT_RECT_PROMPT = """图片中用红色框和名称(%s)标注出了一些区域。
-如果区域是表格或者图片，使用 ![]() 的形式插入到输出内容中，否则直接输出文字内容。
+DEFAULT_RECT_PROMPT = """图片中用红色框和名称(%s)标注出了一些区域。如果区域是表格或者图片，使用 ![]() 的形式插入到输出内容中，否则直接输出文字内容。
 """
 DEFAULT_ROLE_PROMPT = """你是一个PDF文档解析器，使用markdown和latex语法输出图片的内容。
 """
@@ -194,13 +193,13 @@ def _gpt_parse_images(
     else:
         prompt = DEFAULT_PROMPT
         logging.info("prompt is not provided, using default prompt.")
-    if isinstance(prompt_dict, dict) and 'rect_prompt' in prompt:
+    if isinstance(prompt_dict, dict) and 'rect_prompt' in prompt_dict:
         rect_prompt = prompt_dict['rect_prompt']
         logging.info("rect_prompt is provided, using user prompt.")
     else:
         rect_prompt = DEFAULT_RECT_PROMPT
         logging.info("rect_prompt is not provided, using default prompt.")
-    if isinstance(prompt_dict, dict) and 'role_prompt' in prompt:
+    if isinstance(prompt_dict, dict) and 'role_prompt' in prompt_dict:
         role_prompt = prompt_dict['role_prompt']
         logging.info("role_prompt is provided, using user prompt.")
     else:
@@ -212,7 +211,6 @@ def _gpt_parse_images(
         agent = Agent(role=role_prompt, api_key=api_key, base_url=base_url, model=model, disable_python_run=True)
         page_image, rect_images = image_info
         local_prompt = prompt
-        breakpoint()
         if rect_images:
             local_prompt += rect_prompt % ', '.join(rect_images)
         content = agent.run([local_prompt, {'image': page_image}], show_stream=verbose)
