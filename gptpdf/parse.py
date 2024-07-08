@@ -1,4 +1,5 @@
 import os
+import re
 from typing import List, Tuple, Optional, Dict
 import logging
 
@@ -113,19 +114,20 @@ def _parse_rects(page: fitz.Page) -> List[Tuple[float, float, float, float]]:
 
     merged_rects = _merge_rects(rect_list, distance=10, horizontal_distance=100)
     merged_rects = [rect for rect in merged_rects if explain_validity(rect) == 'Valid Geometry']
-    
+
     # 将大文本区域和小文本区域分开处理: 大文本相小合并，小文本靠近合并
     is_large_content = lambda x: (len(x[4]) / max(1, len(x[4].split('\n')))) > 5
     small_text_area_rects = [sg.box(*x[:4]) for x in page.get_text('blocks') if not is_large_content(x)]
     large_text_area_rects = [sg.box(*x[:4]) for x in page.get_text('blocks') if is_large_content(x)]
-    _, merged_rects = _adsorb_rects_to_rects(large_text_area_rects, merged_rects, distance=0.1) # 完全相交
-    _, merged_rects = _adsorb_rects_to_rects(small_text_area_rects, merged_rects, distance=5) # 靠近
-    
+    _, merged_rects = _adsorb_rects_to_rects(large_text_area_rects, merged_rects, distance=0.1)  # 完全相交
+    _, merged_rects = _adsorb_rects_to_rects(small_text_area_rects, merged_rects, distance=5)  # 靠近
+
     # 再次自身合并
     merged_rects = _merge_rects(merged_rects, distance=10)
 
     # 过滤比较小的矩形
-    merged_rects = [rect for rect in merged_rects if rect.bounds[2] - rect.bounds[0] > 20 and rect.bounds[3] - rect.bounds[1] > 20]
+    merged_rects = [rect for rect in merged_rects if
+                    rect.bounds[2] - rect.bounds[0] > 20 and rect.bounds[3] - rect.bounds[1] > 20]
 
     return [rect.bounds for rect in merged_rects]
 
@@ -221,6 +223,13 @@ def _gpt_parse_images(
         futures = [executor.submit(_process_page, index, image_info) for index, image_info in enumerate(image_infos)]
         for future in concurrent.futures.as_completed(futures):
             index, content = future.result()
+
+            # 在某些情况下大模型还是会输出 ```markdown ```字符串
+            if '```markdown' in content:
+                content = content.replace('```markdown\n', '')
+                last_backticks_pos = content.rfind('```')
+                if last_backticks_pos != -1:
+                    content = content[:last_backticks_pos] + content[last_backticks_pos + 3:]
             contents[index] = content
 
     output_path = os.path.join(output_dir, 'output.md')
