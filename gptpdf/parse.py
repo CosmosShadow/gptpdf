@@ -175,7 +175,7 @@ def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[st
 
 def _gpt_parse_images(
         image_infos: List[Tuple[str, List[str]]],
-        prompt: Optional[Dict] = None,
+        prompt_dict: Optional[Dict] = None,
         output_dir: str = './',
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
@@ -188,17 +188,20 @@ def _gpt_parse_images(
     """
     from GeneralAgent import Agent
 
-    if prompt is None:
+    if isinstance(prompt_dict, dict) and 'prompt' in prompt_dict:
+        prompt = prompt_dict['prompt']
+        logging.info("prompt is provided, using user prompt.")
+    else:
         prompt = DEFAULT_PROMPT
         logging.info("prompt is not provided, using default prompt.")
-    if isinstance(prompt, dict) and 'rect_prompt' in prompt:
-        rect_prompt = prompt['rect_prompt']
+    if isinstance(prompt_dict, dict) and 'rect_prompt' in prompt:
+        rect_prompt = prompt_dict['rect_prompt']
         logging.info("rect_prompt is provided, using user prompt.")
     else:
         rect_prompt = DEFAULT_RECT_PROMPT
         logging.info("rect_prompt is not provided, using default prompt.")
-    if isinstance(prompt, dict) and 'role_prompt' in prompt:
-        role_prompt = prompt['role_prompt']
+    if isinstance(prompt_dict, dict) and 'role_prompt' in prompt:
+        role_prompt = prompt_dict['role_prompt']
         logging.info("role_prompt is provided, using user prompt.")
     else:
         role_prompt = DEFAULT_ROLE_PROMPT
@@ -209,6 +212,7 @@ def _gpt_parse_images(
         agent = Agent(role=role_prompt, api_key=api_key, base_url=base_url, model=model, disable_python_run=True)
         page_image, rect_images = image_info
         local_prompt = prompt
+        breakpoint()
         if rect_images:
             local_prompt += rect_prompt % ', '.join(rect_images)
         content = agent.run([local_prompt, {'image': page_image}], show_stream=verbose)
@@ -248,7 +252,7 @@ def parse_pdf(
     content = _gpt_parse_images(
         image_infos=image_infos,
         output_dir=output_dir,
-        prompt=prompt,
+        prompt_dict=prompt,
         api_key=api_key,
         base_url=base_url,
         model=model,

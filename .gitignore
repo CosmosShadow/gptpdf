@@ -4,3 +4,4 @@ gp/*
 dist/*
 .idea
 venv
+test_output
