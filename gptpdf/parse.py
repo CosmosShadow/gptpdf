@@ -119,15 +119,14 @@ def _parse_rects(page: fitz.Page) -> List[Tuple[float, float, float, float]]:
     is_large_content = lambda x: (len(x[4]) / max(1, len(x[4].split('\n')))) > 5
     small_text_area_rects = [sg.box(*x[:4]) for x in page.get_text('blocks') if not is_large_content(x)]
     large_text_area_rects = [sg.box(*x[:4]) for x in page.get_text('blocks') if is_large_content(x)]
-    _, merged_rects = _adsorb_rects_to_rects(large_text_area_rects, merged_rects, distance=0.1)  # 完全相交
-    _, merged_rects = _adsorb_rects_to_rects(small_text_area_rects, merged_rects, distance=5)  # 靠近
+    _, merged_rects = _adsorb_rects_to_rects(large_text_area_rects, merged_rects, distance=0.1) # 完全相交
+    _, merged_rects = _adsorb_rects_to_rects(small_text_area_rects, merged_rects, distance=5) # 靠近
 
     # 再次自身合并
     merged_rects = _merge_rects(merged_rects, distance=10)
 
     # 过滤比较小的矩形
-    merged_rects = [rect for rect in merged_rects if
-                    rect.bounds[2] - rect.bounds[0] > 20 and rect.bounds[3] - rect.bounds[1] > 20]
+    merged_rects = [rect for rect in merged_rects if rect.bounds[2] - rect.bounds[0] > 20 and rect.bounds[3] - rect.bounds[1] > 20]
 
     return [rect.bounds for rect in merged_rects]
 
@@ -214,7 +213,7 @@ def _gpt_parse_images(
         page_image, rect_images = image_info
         local_prompt = prompt
         if rect_images:
-            local_prompt += rect_prompt % ', '.join(rect_images)
+            local_prompt += rect_prompt + ', '.join(rect_images)
         content = agent.run([local_prompt, {'image': page_image}], show_stream=verbose)
         return index, content
 
@@ -230,6 +229,7 @@ def _gpt_parse_images(
                 last_backticks_pos = content.rfind('```')
                 if last_backticks_pos != -1:
                     content = content[:last_backticks_pos] + content[last_backticks_pos + 3:]
+
             contents[index] = content
 
     output_path = os.path.join(output_dir, 'output.md')
