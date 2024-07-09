@@ -25,7 +25,8 @@
 
 ## 样例
 
-有关 PDF，请参阅 [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you_need/output.md) [examples/attention_is_all_you_need.pdf](examples/attention_is_all_you_need.pdf)。
+有关
+PDF，请参阅 [examples/attention_is_all_you_need/output.md](examples/attention_is_all_you_need/output.md) [examples/attention_is_all_you_need.pdf](examples/attention_is_all_you_need.pdf)。
 
 ## 安装
 
@@ -50,6 +51,7 @@ print(content)
 ### parse_pdf
 
 **函数**：
+
 ```
 def parse_pdf(
         pdf_path: str,
@@ -77,12 +79,15 @@ def parse_pdf(
   OpenAI API 密钥。如果未提供，则使用 `OPENAI_API_KEY` 环境变量。
 
 - **base_url**：*Optional[str]*，可选  
-  OpenAI 基本 URL。如果未提供，则使用 `OPENAI_BASE_URL` 环境变量。可以通过修改该环境变量调用 OpenAI API 类接口的其他大模型服务，例如`GLM-4V`。
+  OpenAI 基本 URL。如果未提供，则使用 `OPENAI_BASE_URL` 环境变量。可以通过修改该环境变量调用 OpenAI API
+  类接口的其他大模型服务，例如`GLM-4V`。
 
-- **model**：*str*，默认值：'gpt-4o'。OpenAI API 格式的多模态大模型。如果需要使用其他模型，例如 
-  - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start)（尚未测试）
-  - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v)（已测试）
-  - Azure OpenAI，通过将 `base_url` 指定为 `https://xxxx.openai.azure.com/` 来使用 Azure OpenAI，`api_key` 是 Azure API 密钥，模型类似于 `azure_xxxx`，其中 `xxxx` 是部署的模型名称（已测试）。
+- **model**：*str*，默认值：'gpt-4o'。OpenAI API 格式的多模态大模型。如果需要使用其他模型，例如
+    - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start)
+    - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v)
+    - [Yi-Vision](https://platform.lingyiwanwu.com/docs)
+    - Azure OpenAI，通过将 `base_url` 指定为 `https://xxxx.openai.azure.com/` 来使用 Azure OpenAI，`api_key` 是 Azure API
+      密钥，模型类似于 `azure_xxxx`，其中 `xxxx` 是部署的模型名称（已测试）。
 
 - **verbose**：*bool*，默认值：False，详细模式，开启后会在命令行显示大模型解析的内容。
 
@@ -113,7 +118,6 @@ def parse_pdf(
   
   ```
   您不需要替换所有的提示词，如果您没有传入自定义提示词，仓库会自动使用默认的提示词。默认提示词使用的是中文，如果您的PDF文档是英文的，或者您的模型不支持中文，建议您自定义提示词。
-
 
 ## 版本
 
