@@ -83,9 +83,9 @@ def parse_pdf(
   类接口的其他大模型服务，例如`GLM-4V`。
 
 - **model**：*str*，默认值：'gpt-4o'。OpenAI API 格式的多模态大模型。如果需要使用其他模型，例如
-    - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start)（尚未测试）
-    - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v)（已测试）
-    - [Yi-Vision](https://platform.lingyiwanwu.com/docs) （已测试）
+    - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start)
+    - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v)
+    - [Yi-Vision](https://platform.lingyiwanwu.com/docs)
     - Azure OpenAI，通过将 `base_url` 指定为 `https://xxxx.openai.azure.com/` 来使用 Azure OpenAI，`api_key` 是 Azure API
       密钥，模型类似于 `azure_xxxx`，其中 `xxxx` 是部署的模型名称（已测试）。
 
