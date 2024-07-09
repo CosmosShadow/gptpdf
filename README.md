@@ -93,6 +93,7 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
   OpenAI API formatted multimodal large model. If you need to use other models, such as:
   - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start) (untested)
   - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v) (tested)
+  - [Yi-Vision](https://platform.lingyiwanwu.com/docs) (tested)
   - Azure OpenAI, by setting the `base_url` to `https://xxxx.openai.azure.com/` to use Azure OpenAI, where `api_key` is the Azure API key, and the model is similar to `azure_xxxx`, where `xxxx` is the deployed model name (tested).
 
 - **verbose**: *bool*, default: False  
