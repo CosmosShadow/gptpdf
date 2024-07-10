@@ -11,8 +11,8 @@ pdf_path = '../examples/rh.pdf'
 output_dir = '../examples/rh/'
 
 # 清空output_dir
-import shutil
-shutil.rmtree(output_dir, ignore_errors=True)
+# import shutil
+# shutil.rmtree(output_dir, ignore_errors=True)
 
 def test_use_api_key():
     from gptpdf import parse_pdf
