@@ -43,11 +43,20 @@ def test_azure():
     content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=True)
     print(content)
     print(image_paths)
-    
 
+def test_qwen_vl_max():
+    from gptpdf import parse_pdf
+    api_key = 'sk-xxxx'
+    base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    # Refer to: https://help.aliyun.com/zh/dashscope/developer-reference/compatibility-of-openai-with-dashscope
+    model  = 'qwen-vl-max'
+    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=True, temperature=0.5, max_tokens=1000, top_p=0.9, frequency_penalty=1)
+    print(content)
+    print(image_paths)
 
 
 if __name__ == '__main__':
-    test_use_api_key()
+    # test_use_api_key()
     # test_use_env()
     # test_azure()
+    test_qwen_vl_max()

@@ -91,7 +91,7 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
 
 - **model**: *str*, default: 'gpt-4o'  
   OpenAI API formatted multimodal large model. If you need to use other models, such as:
-  - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start) 
+  - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/compatibility-of-openai-with-dashscope) 
   - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v)
   - [Yi-Vision](https://platform.lingyiwanwu.com/docs) 
   - Azure OpenAI, by setting the `base_url` to `https://xxxx.openai.azure.com/` to use Azure OpenAI, where `api_key` is the Azure API key, and the model is similar to `azure_xxxx`, where `xxxx` is the deployed model name (tested).
@@ -125,11 +125,7 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
       verbose=False,
   )
 
-## Version
-
-- 0.0.9~0.0.10: Optimize pdf parsing process, better parsing effect
-- 0.0.2 - 0.0.8: Add gpt_worker parameter；Add GLM-4V, Azure OpenAI support; Fix some bugs
-- 0.0.1: First version
+- **args"": LLM other parameters, such as `temperature`, `top_p`, `max_tokens`, `presence_penalty`, `frequency_penalty`, etc.
   
 ## Join Us 👏🏻
 

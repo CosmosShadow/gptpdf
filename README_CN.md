@@ -61,7 +61,8 @@ def parse_pdf(
         base_url: Optional[str] = None,
         model: str = 'gpt-4o',
         verbose: bool = False,
-        gpt_worker: int = 1
+        gpt_worker: int = 1,
+        **args
 ) -> Tuple[str, List[str]]:
 ```
 
@@ -83,7 +84,7 @@ def parse_pdf(
   类接口的其他大模型服务，例如`GLM-4V`。
 
 - **model**：*str*，默认值：'gpt-4o'。OpenAI API 格式的多模态大模型。如果需要使用其他模型，例如
-    - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/vl-plus-quick-start)
+    - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/compatibility-of-openai-with-dashscope)
     - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v)
     - [Yi-Vision](https://platform.lingyiwanwu.com/docs)
     - Azure OpenAI，通过将 `base_url` 指定为 `https://xxxx.openai.azure.com/` 来使用 Azure OpenAI，`api_key` 是 Azure API
@@ -119,11 +120,8 @@ def parse_pdf(
   ```
   您不需要替换所有的提示词，如果您没有传入自定义提示词，仓库会自动使用默认的提示词。默认提示词使用的是中文，如果您的PDF文档是英文的，或者您的模型不支持中文，建议您自定义提示词。
 
-## 版本
+- **args"": LLM 中其他参数，例如 `temperature`，`max_tokens`, `top_p`, `frequency_penalty`, `presence_penalty` 等。
 
-- 0.0.9~0.0.10: 优化 PDF 解析流程，解析效果更好
-- 0.0.2 - 0.0.8: 添加 gpt_worker 参数；添加 GLM-4V、Azure OpenAI 支持；修复一些 bug
-- 0.0.1: 第一个版本
 
 ## 加入我们👏🏻
 
