@@ -11,7 +11,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-GeneralAgent = "^0.3.20"
+GeneralAgent = "^0.3.21"
 shapely = "^2.0.1"
 pymupdf = "^1.24.7"
 python-dotenv = "^1.0.0"
