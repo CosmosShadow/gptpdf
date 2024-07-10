@@ -181,7 +181,9 @@ def _gpt_parse_images(
         base_url: Optional[str] = None,
         model: str = 'gpt-4o',
         verbose: bool = False,
-        gpt_worker: int = 1
+        gpt_worker: int = 1,
+        temperature: Optional[float] = None,
+        frequency_penalty: Optional[float] = None
 ) -> str:
     """
     Parse images to markdown content.
@@ -209,7 +211,7 @@ def _gpt_parse_images(
 
     def _process_page(index: int, image_info: Tuple[str, List[str]]) -> Tuple[int, str]:
         logging.info(f'gpt parse page: {index}')
-        agent = Agent(role=role_prompt, api_key=api_key, base_url=base_url, model=model, disable_python_run=True)
+        agent = Agent(role=role_prompt, api_key=api_key, base_url=base_url, model=model, disable_python_run=True,temperature=temperature,frequency_penalty=frequency_penalty)
         page_image, rect_images = image_info
         local_prompt = prompt
         if rect_images:
@@ -247,7 +249,9 @@ def parse_pdf(
         base_url: Optional[str] = None,
         model: str = 'gpt-4o',
         verbose: bool = False,
-        gpt_worker: int = 1
+        gpt_worker: int = 1,
+        temperature: Optional[float] = None,
+        frequency_penalty: Optional[float] = None
 ) -> Tuple[str, List[str]]:
     """
     Parse a PDF file to a markdown file.
@@ -264,7 +268,9 @@ def parse_pdf(
         base_url=base_url,
         model=model,
         verbose=verbose,
-        gpt_worker=gpt_worker
+        gpt_worker=gpt_worker,
+        temperature=temperature,
+        frequency_penalty=frequency_penalty
     )
 
     all_rect_images = []
