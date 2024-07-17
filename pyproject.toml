@@ -11,6 +11,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
+python = ">=3.8.1,<4.0"
 GeneralAgent = "^0.3.21"
 shapely = "^2.0.1"
 pymupdf = "^1.24.7"
