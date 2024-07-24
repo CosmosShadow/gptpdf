@@ -57,6 +57,6 @@ def test_qwen_vl_max():
 
 if __name__ == '__main__':
     # test_use_api_key()
-    # test_use_env()
+    test_use_env()
     # test_azure()
-    test_qwen_vl_max()
+    # test_qwen_vl_max()

@@ -210,7 +210,7 @@ def _gpt_parse_images(
 
     def _process_page(index: int, image_info: Tuple[str, List[str]]) -> Tuple[int, str]:
         logging.info(f'gpt parse page: {index}')
-        agent = Agent(role=role_prompt, api_key=api_key, base_url=base_url, model=model, **args)
+        agent = Agent(role=role_prompt, api_key=api_key, base_url=base_url, disable_python_run=True, model=model, **args)
         page_image, rect_images = image_info
         local_prompt = prompt
         if rect_images:
