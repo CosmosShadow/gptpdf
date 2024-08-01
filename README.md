@@ -45,6 +45,8 @@ pip install gptpdf
 
 ## Usage
 
+### Local Usage
+
 ```python
 from gptpdf import parse_pdf
 api_key = 'Your OpenAI API Key'
@@ -53,6 +55,14 @@ print(content)
 ```
 
 See more in [test/test.py](test/test.py)
+
+
+
+### Google Colab
+
+see [examples/gptpdf_Quick_Tour.ipynb](examples/gptpdf_Quick_Tour.ipynb)
+
+
 
 
 ## API
@@ -124,7 +134,8 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
       prompt=prompt,
       verbose=False,
   )
-
+```
+  
 - **args"": LLM other parameters, such as `temperature`, `top_p`, `max_tokens`, `presence_penalty`, `frequency_penalty`, etc.
   
 ## Join Us 👏🏻

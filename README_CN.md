@@ -36,6 +36,8 @@ pip install gptpdf
 
 ## 使用
 
+### 本地安装使用
+
 ```python
 from gptpdf import parse_pdf
 
@@ -45,6 +47,12 @@ print(content)
 ```
 
 更多内容请见 [test/test.py](test/test.py)
+
+### Google Colab
+
+详情见 [examples/gptpdf_Quick_Tour.ipynb](examples/gptpdf_Quick_Tour.ipynb)
+
+
 
 ## API
 
