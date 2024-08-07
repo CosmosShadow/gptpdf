@@ -131,6 +131,10 @@ def parse_pdf(
 - **args"": LLM 中其他参数，例如 `temperature`，`max_tokens`, `top_p`, `frequency_penalty`, `presence_penalty` 等。
 
 
+
+
+
+
 ## 加入我们👏🏻
 
 使用微信扫描下方二维码，加入微信群聊，或参与贡献。

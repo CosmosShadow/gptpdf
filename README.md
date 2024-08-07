@@ -120,24 +120,30 @@ Parses a PDF file into a Markdown file and returns the Markdown content along wi
 
   You can pass custom prompts in the form of a dictionary to replace any of the prompts. Here is an example:
 
-  ```python
-  prompt = {
-      "prompt": "Custom prompt text",
-      "rect_prompt": "Custom rect prompt",
-      "role_prompt": "Custom role prompt"
-  }
-
-  content, image_paths = parse_pdf(
-      pdf_path=pdf_path,
-      output_dir='./output',
-      model="gpt-4o",
-      prompt=prompt,
-      verbose=False,
-  )
 ```
-  
-- **args"": LLM other parameters, such as `temperature`, `top_p`, `max_tokens`, `presence_penalty`, `frequency_penalty`, etc.
-  
+prompt = {
+    "prompt": "Custom prompt text",
+    "rect_prompt": "Custom rect prompt",
+    "role_prompt": "Custom role prompt"
+}
+
+content, image_paths = parse_pdf(
+    pdf_path=pdf_path,
+    output_dir='./output',
+    model="gpt-4o",
+    prompt=prompt,
+    verbose=False,
+)
+```
+
+
+
+**args**: LLM other parameters, such as `temperature`, `top_p`, `max_tokens`, `presence_penalty`, `frequency_penalty`, etc.
+
+
+
+
+
 ## Join Us 👏🏻
 
 Scan the QR code below with WeChat to join our group chat or contribute.
