@@ -19,7 +19,7 @@ def test_use_api_key():
     api_key = os.getenv('OPENAI_API_KEY')
     base_url = os.getenv('OPENAI_API_BASE')
     # Manually provide OPENAI_API_KEY and OPEN_API_BASE
-    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model='gpt-4o', gpt_worker=6)
+    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model='gpt-4o', gpt_worker=6,dpi=1000)
     print(content)
     print(image_paths)
     # also output_dir/output.md is generated
@@ -50,7 +50,7 @@ def test_qwen_vl_max():
     base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     # Refer to: https://help.aliyun.com/zh/dashscope/developer-reference/compatibility-of-openai-with-dashscope
     model  = 'qwen-vl-max'
-    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=True, temperature=0.5, max_tokens=1000, top_p=0.9, frequency_penalty=1)
+    content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=True, temperature=0.5, max_tokens=1000, top_p=0.9, frequency_penalty=1,dpi=1000)
     print(content)
     print(image_paths)
 

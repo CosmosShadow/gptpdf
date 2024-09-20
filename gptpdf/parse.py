@@ -130,8 +130,8 @@ def _parse_rects(page: fitz.Page) -> List[Tuple[float, float, float, float]]:
 
     return [rect.bounds for rect in merged_rects]
 
-
-def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[str, List[str]]]:
+#增加了PDF图片解析的dpi参数，默认值设为300，根据需求设置300-1000可以满足清晰度需求
+def _parse_pdf_to_images(pdf_path: str,dpi:int,output_dir: str = './') -> List[Tuple[str, List[str]]]:
     """
     Parse PDF to images and save to output_dir.
     """
@@ -143,11 +143,15 @@ def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[st
         logging.info(f'parse page: {page_index}')
         rect_images = []
         rects = _parse_rects(page)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
         for index, rect in enumerate(rects):
             fitz_rect = fitz.Rect(rect)
             # 保存页面为图片
-            pix = page.get_pixmap(clip=fitz_rect, matrix=fitz.Matrix(4, 4))
+            pix = page.get_pixmap(clip=fitz_rect, matrix=fitz.Matrix(dpi/72, dpi/72))
             name = f'{page_index}_{index}.png'
+
+      
             pix.save(os.path.join(output_dir, name))
             rect_images.append(name)
             # # 在页面上绘制红色矩形
@@ -171,7 +175,6 @@ def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[st
 
     pdf_document.close()
     return image_infos
-
 
 def _gpt_parse_images(
         image_infos: List[Tuple[str, List[str]]],
@@ -249,6 +252,7 @@ def parse_pdf(
         model: str = 'gpt-4o',
         verbose: bool = False,
         gpt_worker: int = 1,
+        dpi:int = 300,
         **args
 ) -> Tuple[str, List[str]]:
     """
@@ -257,7 +261,7 @@ def parse_pdf(
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    image_infos = _parse_pdf_to_images(pdf_path, output_dir=output_dir)
+    image_infos = _parse_pdf_to_images(pdf_path, output_dir=output_dir,dpi=dpi)
     content = _gpt_parse_images(
         image_infos=image_infos,
         output_dir=output_dir,
