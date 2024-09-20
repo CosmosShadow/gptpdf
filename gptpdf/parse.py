@@ -168,7 +168,7 @@ def _parse_pdf_to_images(pdf_path: str,dpi:int,output_dir: str = './') -> List[T
             page.draw_rect(text_rect, color=(1, 1, 1), fill=(1, 1, 1))
             # 插入带有白色背景的文字
             page.insert_text((text_x, text_y), name, fontsize=10, color=(1, 0, 0))
-        page_image_with_rects = page.get_pixmap(matrix=fitz.Matrix(3, 3))
+        page_image_with_rects = page.get_pixmap(matrix=fitz.Matrix(dpi/72, dpi/72))
         page_image = os.path.join(output_dir, f'{page_index}.png')
         page_image_with_rects.save(page_image)
         image_infos.append((page_image, rect_images))
