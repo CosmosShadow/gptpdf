@@ -50,6 +50,7 @@ def test_qwen_vl_max():
     base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     # Refer to: https://help.aliyun.com/zh/dashscope/developer-reference/compatibility-of-openai-with-dashscope
     model  = 'qwen-vl-max'
+    #新增了dpi参数，默认值为200
     content, image_paths = parse_pdf(pdf_path, output_dir=output_dir, api_key=api_key, base_url=base_url, model=model, verbose=True, temperature=0.5, max_tokens=1000, top_p=0.9, frequency_penalty=1,dpi=1000)
     print(content)
     print(image_paths)

@@ -130,7 +130,6 @@ def _parse_rects(page: fitz.Page) -> List[Tuple[float, float, float, float]]:
 
     return [rect.bounds for rect in merged_rects]
 
-#增加了PDF图片解析的dpi参数，默认值设为300，根据需求设置300-1000可以满足清晰度需求
 def _parse_pdf_to_images(pdf_path: str,dpi:int,output_dir: str = './') -> List[Tuple[str, List[str]]]:
     """
     Parse PDF to images and save to output_dir.
@@ -242,7 +241,7 @@ def _gpt_parse_images(
 
     return '\n\n'.join(contents)
 
-
+#增加了PDF图片解析的dpi参数，默认值设为200，根据需求设置300-1000可以满足清晰度需求
 def parse_pdf(
         pdf_path: str,
         output_dir: str = './',
@@ -252,7 +251,7 @@ def parse_pdf(
         model: str = 'gpt-4o',
         verbose: bool = False,
         gpt_worker: int = 1,
-        dpi:int = 300,
+        dpi:int = 200,
         **args
 ) -> Tuple[str, List[str]]:
     """
