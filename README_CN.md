@@ -11,8 +11,6 @@
 
 每页平均价格：0.013 美元
 
-我们使用 [GeneralAgent](https://github.com/CosmosShadow/GeneralAgent) lib 与 OpenAI API 交互。
-
 [pdfgpt-ui](https://github.com/daodao97/gptpdf-ui) 是一个基于 gptpdf 的可视化工具。
 
 ## 处理流程
@@ -64,13 +62,13 @@ print(content)
 def parse_pdf(
         pdf_path: str,
         output_dir: str = './',
-        prompt: Optional[Dict] = None,
-        api_key: Optional[str] = None,
-        base_url: Optional[str] = None,
-        model: str = 'gpt-4o',
-        verbose: bool = False,
+        api_key = None,
+        base_url = None,
+        model = 'gpt-4o',
         gpt_worker: int = 1,
-        **args
+        prompt = DEFAULT_PROMPT,
+        rect_prompt = DEFAULT_RECT_PROMPT,
+        role_prompt = DEFAULT_ROLE_PROMPT,
 ) -> Tuple[str, List[str]]:
 ```
 
@@ -84,56 +82,39 @@ def parse_pdf(
 - **output_dir**：*str*，默认值：'./'  
   输出目录，存储所有图片和 Markdown 文件
 
-- **api_key**：*Optional[str]*，可选  
-  OpenAI API 密钥。如果未提供，则使用 `OPENAI_API_KEY` 环境变量。
+- **api_key**：*str*  
+  OpenAI API 密钥。如果未通过此参数提供，则必须通过 `OPENAI_API_KEY` 环境变量设置。
 
-- **base_url**：*Optional[str]*，可选  
-  OpenAI 基本 URL。如果未提供，则使用 `OPENAI_BASE_URL` 环境变量。可以通过修改该环境变量调用 OpenAI API
-  类接口的其他大模型服务，例如`GLM-4V`。
+- **base_url**：*str*，可选  
+  OpenAI 基本 URL。如果未通过此参数提供，则必须通过 `OPENAI_BASE_URL` 环境变量设置。可用于配置自定义 OpenAI API 端点。
 
 - **model**：*str*，默认值：'gpt-4o'。OpenAI API 格式的多模态大模型。如果需要使用其他模型，例如
-    - [qwen-vl-max](https://help.aliyun.com/zh/dashscope/developer-reference/compatibility-of-openai-with-dashscope)
-    - [GLM-4V](https://open.bigmodel.cn/dev/api#glm-4v)
-    - [Yi-Vision](https://platform.lingyiwanwu.com/docs)
-    - Azure OpenAI，通过将 `base_url` 指定为 `https://xxxx.openai.azure.com/` 来使用 Azure OpenAI，`api_key` 是 Azure API
-      密钥，模型类似于 `azure_xxxx`，其中 `xxxx` 是部署的模型名称（已测试）。
-
-- **verbose**：*bool*，默认值：False，详细模式，开启后会在命令行显示大模型解析的内容。
 
 - **gpt_worker**：*int*，默认值：1  
   GPT 解析工作线程数。如果您的机器性能较好，可以适当调高，以提高解析速度。
 
-- **prompt**: *dict*, 可选，如果您使用的模型与本仓库默认的提示词不匹配，无法发挥出最佳效果，我们支持自定义加入提示词。
-  仓库中，提示词分为三个部分，分别是：
-    + `prompt`：主要用于指导模型如何处理和转换图片中的文本内容。
-    + `rect_prompt`：用于处理图片中标注了特定区域（例如表格或图片）的情况。
-    + `role_prompt`：定义了模型的角色，确保模型理解它在执行PDF文档解析任务。
-      您可以用字典的形式传入自定义的提示词，实现对任意提示词的替换，这是一个例子：
+- **prompt**：*str*，默认值：使用内置提示词  
+  自定义主提示词，用于指导模型如何处理和转换图片中的文本内容。
+
+- **rect_prompt**：*str*，默认值：使用内置提示词  
+  自定义矩形区域提示词，用于处理图片中标注了特定区域（例如表格或图片）的情况。
+
+- **role_prompt**：*str*，默认值：使用内置提示词  
+  自定义角色提示词，定义了模型的角色，确保模型理解它在执行PDF文档解析任务。
+
+  您可以自定义这些提示词，以适应不同的模型或特定需求，例如：
 
   ```python
-  prompt = {
-      "prompt": "自定义提示词语",
-      "rect_prompt": "自定义提示词",
-      "role_prompt": "自定义提示词"
-  }
-  
   content, image_paths = parse_pdf(
       pdf_path=pdf_path,
       output_dir='./output',
       model="gpt-4o",
-      prompt="",
+      prompt="自定义主提示词",
+      rect_prompt="自定义矩形区域提示词",
+      role_prompt="自定义角色提示词",
       verbose=False,
   )
-  
   ```
-  您不需要替换所有的提示词，如果您没有传入自定义提示词，仓库会自动使用默认的提示词。默认提示词使用的是中文，如果您的PDF文档是英文的，或者您的模型不支持中文，建议您自定义提示词。
-
-- **args"": LLM 中其他参数，例如 `temperature`，`max_tokens`, `top_p`, `frequency_penalty`, `presence_penalty` 等。
-
-
-
-
-
 
 ## 加入我们👏🏻
 

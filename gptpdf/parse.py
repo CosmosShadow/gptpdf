@@ -1,20 +1,22 @@
 import os
 import re
+import base64
 from typing import List, Tuple, Optional, Dict
-import logging
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-import fitz  # PyMuPDF
+import fitz
 import shapely.geometry as sg
 from shapely.geometry.base import BaseGeometry
 from shapely.validation import explain_validity
 import concurrent.futures
+import logging
+from openai import OpenAI
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # This Default Prompt Using Chinese and could be changed to other languages.
 
 DEFAULT_PROMPT = """使用markdown语法，将图片中识别到的文字转换为markdown格式输出。你必须做到：
 1. 输出和使用识别到的图片的相同的语言，例如，识别到英语的字段，输出的内容必须是英语。
-2. 不要解释和输出无关的文字，直接输出图片中的内容。例如，严禁输出 “以下是我根据图片内容生成的markdown文本：”这样的例子，而是应该直接输出markdown。
+2. 不要解释和输出无关的文字，直接输出图片中的内容。例如，严禁输出 "以下是我根据图片内容生成的markdown文本："这样的例子，而是应该直接输出markdown。
 3. 内容不要包含在```markdown ```中、段落公式使用 $$ $$ 的形式、行内公式使用 $ $ 的形式、忽略掉长直线、忽略掉页码。
 再次强调，不要解释和输出无关的文字，直接输出图片中的内容。
 """
@@ -24,16 +26,24 @@ DEFAULT_ROLE_PROMPT = """你是一个PDF文档解析器，使用markdown和latex
 """
 
 
-def _is_near(rect1: BaseGeometry, rect2: BaseGeometry, distance: float = 20) -> bool:
+def _is_near(rect1, rect2, distance = 20):
     """
-    Check if two rectangles are near each other if the distance between them is less than the target.
+    检查两个矩形是否靠近，如果它们之间的距离小于目标距离。
+    @param rect1: 矩形1
+    @param rect2: 矩形2
+    @param distance: 目标距离
+    @return: 是否靠近
     """
     return rect1.buffer(0.1).distance(rect2.buffer(0.1)) < distance
 
 
-def _is_horizontal_near(rect1: BaseGeometry, rect2: BaseGeometry, distance: float = 100) -> bool:
+def _is_horizontal_near(rect1, rect2, distance = 100):
     """
-    Check if two rectangles are near horizontally if one of them is a horizontal line.
+    检查两个矩形是否水平靠近，如果其中一个矩形是水平线。
+    @param rect1: 矩形1
+    @param rect2: 矩形2
+    @param distance: 目标距离
+    @return: 是否水平靠近
     """
     result = False
     if abs(rect1.bounds[3] - rect1.bounds[1]) < 0.1 or abs(rect2.bounds[3] - rect2.bounds[1]) < 0.1:
@@ -42,17 +52,23 @@ def _is_horizontal_near(rect1: BaseGeometry, rect2: BaseGeometry, distance: floa
     return result
 
 
-def _union_rects(rect1: BaseGeometry, rect2: BaseGeometry) -> BaseGeometry:
+def _union_rects(rect1, rect2):
     """
-    Union two rectangles.
+    合并两个矩形。
+    @param rect1: 矩形1
+    @param rect2: 矩形2
+    @return: 合并后的矩形
     """
     return sg.box(*(rect1.union(rect2).bounds))
 
 
-def _merge_rects(rect_list: List[BaseGeometry], distance: float = 20, horizontal_distance: Optional[float] = None) -> \
-        List[BaseGeometry]:
+def _merge_rects(rect_list, distance = 20, horizontal_distance = None):
     """
-    Merge rectangles in the list if the distance between them is less than the target.
+    合并列表中的矩形，如果它们之间的距离小于目标距离。
+    @param rect_list: 矩形列表
+    @param distance: 目标距离
+    @param horizontal_distance: 水平目标距离
+    @return: 合并后的矩形列表
     """
     merged = True
     while merged:
@@ -71,10 +87,13 @@ def _merge_rects(rect_list: List[BaseGeometry], distance: float = 20, horizontal
     return rect_list
 
 
-def _adsorb_rects_to_rects(source_rects: List[BaseGeometry], target_rects: List[BaseGeometry], distance: float = 10) -> \
-        Tuple[List[BaseGeometry], List[BaseGeometry]]:
+def _adsorb_rects_to_rects(source_rects, target_rects, distance=10):
     """
-    Adsorb a set of rectangles to another set of rectangles.
+    当距离小于目标距离时，将一组矩形吸附到另一组矩形。
+    @param source_rects: 源矩形列表
+    @param target_rects: 目标矩形列表
+    @param distance: 目标距离
+    @return: 吸附后的源矩形列表和目标矩形列表
     """
     new_source_rects = []
     for text_area_rect in source_rects:
@@ -90,9 +109,11 @@ def _adsorb_rects_to_rects(source_rects: List[BaseGeometry], target_rects: List[
     return new_source_rects, target_rects
 
 
-def _parse_rects(page: fitz.Page) -> List[Tuple[float, float, float, float]]:
+def _parse_rects(page):
     """
-    Parse drawings in the page and merge adjacent rectangles.
+    解析页面中的绘图，并合并相邻的矩形。
+    @param page: 页面
+    @return: 矩形列表
     """
 
     # 提取画的内容
@@ -131,9 +152,12 @@ def _parse_rects(page: fitz.Page) -> List[Tuple[float, float, float, float]]:
     return [rect.bounds for rect in merged_rects]
 
 
-def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[str, List[str]]]:
+def _parse_pdf_to_images(pdf_path, output_dir = './'):
     """
-    Parse PDF to images and save to output_dir.
+    解析PDF文件到图片，并保存到输出目录。
+    @param pdf_path: PDF文件路径
+    @param output_dir: 输出目录
+    @return: 图片信息列表(图片路径, 矩形图片路径列表)
     """
     # 打开PDF文件
     pdf_document = fitz.open(pdf_path)
@@ -172,109 +196,95 @@ def _parse_pdf_to_images(pdf_path: str, output_dir: str = './') -> List[Tuple[st
     pdf_document.close()
     return image_infos
 
+def _remove_markdown_backticks(content: str) -> str:
+    """
+    删除markdown中的```字符串。
+    """
+    if '```markdown' in content:
+        content = content.replace('```markdown\n', '')
+        last_backticks_pos = content.rfind('```')
+        if last_backticks_pos != -1:
+            content = content[:last_backticks_pos] + content[last_backticks_pos + 3:]
+    return content
 
-def _gpt_parse_images(
-        image_infos: List[Tuple[str, List[str]]],
-        prompt_dict: Optional[Dict] = None,
+
+def parse_pdf(
+        pdf_path: str,
         output_dir: str = './',
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
         model: str = 'gpt-4o',
-        verbose: bool = False,
         gpt_worker: int = 1,
-        **args
-) -> str:
+        prompt = DEFAULT_PROMPT,
+        rect_prompt = DEFAULT_RECT_PROMPT,
+        role_prompt = DEFAULT_ROLE_PROMPT,
+) -> Tuple[str, List[str]]:
     """
-    Parse images to markdown content.
+    解析PDF文件到markdown文件。
+    @param pdf_path: PDF文件路径
+    @param output_dir: 输出目录
+    @return: 解析后的markdown内容, 矩形图片路径列表
     """
-    from GeneralAgent import Agent
+    
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    if isinstance(prompt_dict, dict) and 'prompt' in prompt_dict:
-        prompt = prompt_dict['prompt']
-        logging.info("prompt is provided, using user prompt.")
-    else:
-        prompt = DEFAULT_PROMPT
-        logging.info("prompt is not provided, using default prompt.")
-    if isinstance(prompt_dict, dict) and 'rect_prompt' in prompt_dict:
-        rect_prompt = prompt_dict['rect_prompt']
-        logging.info("rect_prompt is provided, using user prompt.")
-    else:
-        rect_prompt = DEFAULT_RECT_PROMPT
-        logging.info("rect_prompt is not provided, using default prompt.")
-    if isinstance(prompt_dict, dict) and 'role_prompt' in prompt_dict:
-        role_prompt = prompt_dict['role_prompt']
-        logging.info("role_prompt is provided, using user prompt.")
-    else:
-        role_prompt = DEFAULT_ROLE_PROMPT
-        logging.info("role_prompt is not provided, using default prompt.")
-
+    image_infos = _parse_pdf_to_images(pdf_path, output_dir=output_dir)
+    
+    # Process images with GPT
     def _process_page(index: int, image_info: Tuple[str, List[str]]) -> Tuple[int, str]:
-        logging.info(f'gpt parse page: {index}')
-        agent = Agent(role=role_prompt, api_key=api_key, base_url=base_url, disable_python_run=True, model=model, **args)
+        # 使用 OpenAI 客户端替代 Agent
+        client = OpenAI(api_key=api_key, base_url=base_url)
         page_image, rect_images = image_info
         local_prompt = prompt
         if rect_images:
             local_prompt += rect_prompt + ', '.join(rect_images)
-        content = agent.run([local_prompt, {'image': page_image}], display=verbose)
-        return index, content
+        
+        # 打开图片文件
+        with open(page_image, "rb") as image_file:
+            # 调用 OpenAI API
+            try:
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": role_prompt},
+                        {"role": "user", "content": [
+                            {"type": "text", "text": local_prompt},
+                            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{base64.b64encode(image_file.read()).decode('utf-8')}"}}
+                        ]}
+                    ]
+                )
+
+                # 检查 response.choices 是否为 None
+                if not response.choices:
+                    print(response)
+                    return index, f"Error: Empty choices in API response for page {index+1}"
+                    
+                content = response.choices[0].message.content
+                return index, content
+            except Exception as e:
+                # 捕获所有异常并返回错误信息
+                return index, f"Error processing page {index+1}: {str(e)}"
 
     contents = [None] * len(image_infos)
     with concurrent.futures.ThreadPoolExecutor(max_workers=gpt_worker) as executor:
         futures = [executor.submit(_process_page, index, image_info) for index, image_info in enumerate(image_infos)]
         for future in concurrent.futures.as_completed(futures):
             index, content = future.result()
-
-            # 在某些情况下大模型还是会输出 ```markdown ```字符串
-            if '```markdown' in content:
-                content = content.replace('```markdown\n', '')
-                last_backticks_pos = content.rfind('```')
-                if last_backticks_pos != -1:
-                    content = content[:last_backticks_pos] + content[last_backticks_pos + 3:]
-
+            content = _remove_markdown_backticks(content)
             contents[index] = content
 
+    # 保存解析后的markdown文件
     output_path = os.path.join(output_dir, 'output.md')
+    content = '\n\n'.join(contents)
     with open(output_path, 'w', encoding='utf-8') as f:
-        f.write('\n\n'.join(contents))
+        f.write(content)
 
-    return '\n\n'.join(contents)
-
-
-def parse_pdf(
-        pdf_path: str,
-        output_dir: str = './',
-        prompt: Optional[Dict] = None,
-        api_key: Optional[str] = None,
-        base_url: Optional[str] = None,
-        model: str = 'gpt-4o',
-        verbose: bool = False,
-        gpt_worker: int = 1,
-        **args
-) -> Tuple[str, List[str]]:
-    """
-    Parse a PDF file to a markdown file.
-    """
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    image_infos = _parse_pdf_to_images(pdf_path, output_dir=output_dir)
-    content = _gpt_parse_images(
-        image_infos=image_infos,
-        output_dir=output_dir,
-        prompt_dict=prompt,
-        api_key=api_key,
-        base_url=base_url,
-        model=model,
-        verbose=verbose,
-        gpt_worker=gpt_worker,
-        **args
-    )
-
+    #  删除中间过程的图片
     all_rect_images = []
-    # remove all rect images
-    if not verbose:
-        for page_image, rect_images in image_infos:
-            if os.path.exists(page_image):
-                os.remove(page_image)
-            all_rect_images.extend(rect_images)
+    for page_image, rect_images in image_infos:
+        if os.path.exists(page_image):
+            os.remove(page_image)
+        all_rect_images.extend(rect_images)
+
     return content, all_rect_images
